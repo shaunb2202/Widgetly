@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Email Widget</title>
+</head>
+<body>
+    <div style="background-color:#519ac8;padding:20px;text-align:center;font-family:Arial,sans-serif;">
+        <p>How satisfied are you with ApplyIQ?</p>
+        <form action="http://localhost:3000/feedback" method="post" style="display:inline;">
+          <input type="hidden" name="rating" value="1">
+          <input type="hidden" name="widget_type" value="email">
+          <button type="submit" style="font-size:24px;border:none;background:none;cursor:pointer;">😣</button>
+        </form>
+        <form action="http://localhost:3000/feedback" method="post" style="display:inline;">
+          <input type="hidden" name="rating" value="2">
+          <input type="hidden" name="widget_type" value="email">
+          <button type="submit" style="font-size:24px;border:none;background:none;cursor:pointer;">😟</button>
+        </form>
+        <form action="http://localhost:3000/feedback" method="post" style="display:inline;">
+          <input type="hidden" name="rating" value="3">
+          <input type="hidden" name="widget_type" value="email">
+          <button type="submit" style="font-size:24px;border:none;background:none;cursor:pointer;">😐</button>
+        </form>
+        <form action="http://localhost:3000/feedback" method="post" style="display:inline;">
+          <input type="hidden" name="rating" value="4">
+          <input type="hidden" name="widget_type" value="email">
+          <button type="submit" style="font-size:24px;border:none;background:none;cursor:pointer;">😊</button>
+        </form>
+        <form action="http://localhost:3000/feedback" method="post" style="display:inline;">
+          <input type="hidden" name="rating" value="5">
+          <input type="hidden" name="widget_type" value="email">
+          <button type="submit" style="font-size:24px;border:none;background:none;cursor:pointer;">😊</button>
+        </form>
+      </div>
+</body>
+</html>

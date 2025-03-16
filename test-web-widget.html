@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Web Widget</title>
+</head>
+<body>
+  <div style="background-color:#6fa4d3;padding:20px;text-align:center;font-family:Arial,sans-serif;">
+    <p>How satisfied are you? (Web)</p>
+    <span style="font-size:24px;margin:5px;cursor:pointer;" onclick="submitFeedback(1)">😣</span>
+    <span style="font-size:24px;margin:5px;cursor:pointer;" onclick="submitFeedback(2)">😟</span>
+    <span style="font-size:24px;margin:5px;cursor:pointer;" onclick="submitFeedback(3)">😐</span>
+    <span style="font-size:24px;margin:5px;cursor:pointer;" onclick="submitFeedback(4)">😊</span>
+    <span style="font-size:24px;margin:5px;cursor:pointer;" onclick="submitFeedback(5)">😍</span>
+    <script>
+      function submitFeedback(rating) {
+        fetch('/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rating: rating, widget_type: 'web' })
+        })
+        .then(response => response.text())
+        .then(data => alert(data))
+        .catch(err => console.error('Error:', err));
+      }
+    </script>
+  </div>
+</body>
+</html>

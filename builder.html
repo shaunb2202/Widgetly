@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Build Your Widget</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            min-height: 100vh; /* Ensure body can grow */
+        }
+        nav {
+            background-color: #333;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        nav a {
+            color: white;
+            margin: 0 20px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            display: flex;
+            gap: 30px;
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex-direction: column;
+        }
+        .title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+        .content {
+            display: flex;
+            gap: 30px;
+            width: 100%;
+        }
+        .form, .preview {
+            width: 50%;
+        }
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .color-button {
+            padding: 6px 12px;
+            width: auto;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        .color-button:hover {
+            background-color: #45a049;
+        }
+        input[type="color"] {
+            display: none;
+        }
+        button.generate {
+            padding: 10px;
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 25px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        button.generate:hover {
+            background-color: #45a049;
+        }
+        #web-preview, #email-preview {
+            border: 1px solid #ddd;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            background-color: #fff;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        #web-preview h4, #email-preview h4 {
+            margin: 0 0 10px;
+            font-size: 16px;
+            color: #333;
+        }
+        .emoji {
+            font-size: 24px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .preview h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        textarea.embed-code {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none; /* Hidden by default */
+            box-sizing: border-box;
+            resize: vertical; /* Allow vertical resizing */
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/index.html">Home</a>
+        <a href="/builder.html">Build Widget</a>
+        <a href="/dashboard.html">Dashboard</a>
+    </nav>
+    <div class="container">
+        <h1 class="title">Build Your Widget</h1>
+        <div class="content">
+            <div class="form">
+                <label for="web-message">Web Widget Message:</label>
+                <input type="text" id="web-message" placeholder="How satisfied are you? (Web)">
+                <label for="web-color">Web Background Color:</label>
+                <button class="color-button" id="web-color-button">Select colour</button>
+                <input type="color" id="web-color" value="#ffffff">
+                <label for="email-message">Email Widget Message:</label>
+                <input type="text" id="email-message" placeholder="How satisfied are you? (Email)">
+                <label for="email-color">Email Background Color:</label>
+                <button class="color-button" id="email-color-button">Select colour</button>
+                <input type="color" id="email-color" value="#ffffff">
+                <button class="generate" id="generate-web-btn" onclick="generateWebCode()">Generate Web Code</button>
+                <textarea class="embed-code" id="web-embed-code" rows="4"></textarea>
+                <button class="generate" id="generate-email-btn" onclick="generateEmailCode()">Generate Email Code</button>
+                <textarea class="embed-code" id="email-embed-code" rows="4"></textarea>
+            </div>
+            <div class="preview">
+                <h3>Preview</h3>
+                <div id="web-preview">
+                    <h4>Web Widget</h4>
+                    <p id="preview-web-message">How satisfied are you? (Web)</p>
+                    <span class="emoji">😣</span>
+                    <span class="emoji">😟</span>
+                    <span class="emoji">😐</span>
+                    <span class="emoji">😊</span>
+                    <span class="emoji">😍</span>
+                </div>
+                <div id="email-preview">
+                    <h4>Email Widget</h4>
+                    <p id="preview-email-message">How satisfied are you? (Email)</p>
+                    <span class="emoji">😣</span>
+                    <span class="emoji">😟</span>
+                    <span class="emoji">😐</span>
+                    <span class="emoji">😊</span>
+                    <span class="emoji">😍</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const webMessageInput = document.getElementById('web-message');
+        const emailMessageInput = document.getElementById('email-message');
+        const webColorInput = document.getElementById('web-color');
+        const emailColorInput = document.getElementById('email-color');
+        const webColorButton = document.getElementById('web-color-button');
+        const emailColorButton = document.getElementById('email-color-button');
+        const previewWebMessage = document.getElementById('preview-web-message');
+        const previewEmailMessage = document.getElementById('preview-email-message');
+        const webPreview = document.getElementById('web-preview');
+        const emailPreview = document.getElementById('email-preview');
+        const webEmbedCode = document.getElementById('web-embed-code');
+        const emailEmbedCode = document.getElementById('email-embed-code');
+        const generateWebBtn = document.getElementById('generate-web-btn');
+        const generateEmailBtn = document.getElementById('generate-email-btn');
+
+        webColorButton.addEventListener('click', function () {
+            webColorInput.click();
+        });
+        emailColorButton.addEventListener('click', function () {
+            emailColorInput.click();
+        });
+
+        webMessageInput.addEventListener('input', function () {
+            previewWebMessage.textContent = webMessageInput.value || 'How satisfied are you? (Web)';
+        });
+        emailMessageInput.addEventListener('input', function () {
+            previewEmailMessage.textContent = emailMessageInput.value || 'How satisfied are you? (Email)';
+        });
+        webColorInput.addEventListener('input', function () {
+            webPreview.style.backgroundColor = webColorInput.value;
+        });
+        emailColorInput.addEventListener('input', function () {
+            emailPreview.style.backgroundColor = emailColorInput.value;
+        });
+
+        function generateWebCode() {
+            const code = `
+        <div style="background-color:${webColorInput.value};padding:20px;text-align:center;font-family:Arial,sans-serif;">
+          <p>${webMessageInput.value || 'How satisfied are you? (Web)'}</p>
+          <span style="font-size:24px;margin:5px;cursor:pointer;" onclick="submitFeedback(1)">😣</span>
+          <span style="font-size:24px;margin:5px;cursor:pointer;" onclick="submitFeedback(2)">😟</span>
+          <span style="font-size:24px;margin:5px;cursor:pointer;" onclick="submitFeedback(3)">😐</span>
+          <span style="font-size:24px;margin:5px;cursor:pointer;" onclick="submitFeedback(4)">😊</span>
+          <span style="font-size:24px;margin:5px;cursor:pointer;" onclick="submitFeedback(5)">😍</span>
+          <script>
+            function submitFeedback(rating) {
+              fetch('/feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ rating: rating, widget_type: 'web' })
+              })
+              .then(response => response.text())
+              .then(data => alert(data))
+              .catch(err => console.error('Error:', err));
+            }
+          <\/script>
+        </div>
+        `;
+            webEmbedCode.value = code.trim();
+            webEmbedCode.style.display = 'block';
+        }
+
+        function generateEmailCode() {
+            const code = `
+        <div style="background-color:${emailColorInput.value};padding:20px;text-align:center;font-family:Arial,sans-serif;">
+          <p>${emailMessageInput.value || 'How satisfied are you? (Email)'}</p>
+          <form action="/feedback" method="post" style="display:inline;">
+            <input type="hidden" name="rating" value="1">
+            <input type="hidden" name="widget_type" value="email">
+            <button type="submit" style="font-size:24px;border:none;background:none;cursor:pointer;">😣</button>
+          </form>
+          <form action="/feedback" method="post" style="display:inline;">
+            <input type="hidden" name="rating" value="2">
+            <input type="hidden" name="widget_type" value="email">
+            <button type="submit" style="font-size:24px;border:none;background:none;cursor:pointer;">😟</button>
+          </form>
+          <form action="/feedback" method="post" style="display:inline;">
+            <input type="hidden" name="rating" value="3">
+            <input type="hidden" name="widget_type" value="email">
+            <button type="submit" style="font-size:24px;border:none;background:none;cursor:pointer;">😐</button>
+          </form>
+          <form action="/feedback" method="post" style="display:inline;">
+            <input type="hidden" name="rating" value="4">
+            <input type="hidden" name="widget_type" value="email">
+            <button type="submit" style="font-size:24px;border:none;background:none;cursor:pointer;">😊</button>
+          </form>
+          <form action="/feedback" method="post" style="display:inline;">
+            <input type="hidden" name="rating" value="5">
+            <input type="hidden" name="widget_type" value="email">
+            <button type="submit" style="font-size:24px;border:none;background:none;cursor:pointer;">😍</button>
+          </form>
+        </div>
+        `;
+            emailEmbedCode.value = code.trim();
+            emailEmbedCode.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

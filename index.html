@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Widgetly - Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        nav {
+            background-color: #333;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        nav a {
+            color: white;
+            margin: 0 20px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .header h1 {
+            font-size: 48px;
+            margin: 0;
+            font-weight: 700;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .section {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+        .section.reverse {
+            flex-direction: row-reverse;
+        }
+        .section-text {
+            flex: 1;
+        }
+        .section-text h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #4CAF50;
+        }
+        .section-text p {
+            font-size: 16px;
+            color: #555;
+        }
+        .section-image {
+            flex: 1;
+        }
+        .section-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/index.html">Home</a>
+        <a href="/builder.html">Build Widget</a>
+        <a href="/dashboard.html">Dashboard</a>
+    </nav>
+    <div class="header">
+        <h1>Widgetly</h1>
+    </div>
+    <div class="container">
+        <div class="section">
+            <div class="section-text">
+                <h2>The Importance of Gathering User Feedback</h2>
+                <p>
+                    Collecting feedback from your users is the key to understanding their needs and preferences. 
+                    With Widgetly, you can easily embed feedback widgets into your website or emails, 
+                    giving your audience a voice. This direct input helps you identify pain points, 
+                    improve user experience, and build a product that truly resonates with your customers.
+                </p>
+            </div>
+            <div class="section-image">
+                <img src="https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300&q=80" alt="User providing feedback on a tablet">
+            </div>
+        </div>
+        <div class="section reverse">
+            <div class="section-text">
+                <h2>The Importance of Analyzing Results</h2>
+                <p>
+                    Analyzing feedback data drives innovation and product improvement. Widgetly’s dashboard 
+                    provides clear insights through tables and graphs, allowing you to track trends over time. 
+                    By understanding what works and what doesn’t, you can make data-driven decisions to enhance 
+                    your product and stay ahead of the competition.
+                </p>
+            </div>
+            <div class="section-image">
+                <img src="https://via.placeholder.com/500x300.png?text=Analyzing+Results" alt="Data analysis visualization">
+            </div>
+        </div>
+    </div>
+</body>
+</html>

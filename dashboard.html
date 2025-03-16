@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Feedback Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            min-height: 100vh;
+        }
+        nav {
+            background-color: #333;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        nav a {
+            color: white;
+            margin: 0 20px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .content {
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+        .filter {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        select {
+            padding: 8px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button#export-btn {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            margin-left: 10px;
+            transition: background-color 0.2s;
+        }
+        button#export-btn:hover {
+            background-color: #45a049;
+        }
+        .chart-container {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            max-width: 900px;
+            max-height: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background-color: #fff;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: 500;
+            color: #333;
+        }
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/index.html">Home</a>
+        <a href="/builder.html">Build Widget</a>
+        <a href="/dashboard.html">Dashboard</a>
+    </nav>
+    <div class="content">
+        <h1>Feedback Dashboard</h1>
+        <div class="filter">
+            <label for="widget-filter">Filter by Widget Type: </label>
+            <select id="widget-filter">
+                <option value="all">All</option>
+                <option value="web">Web</option>
+                <option value="email">Email</option>
+            </select>
+            <button id="export-btn">Export Data</button>
+        </div>
+        <div class="chart-container">
+            <canvas id="feedback-chart"></canvas>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Rating</th>
+                    <th>Widget Type</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody id="feedback-table"></tbody>
+        </table>
+    </div>
+
+    <script>
+        let chart;
+        let feedbackData; // Store data globally for export
+
+        fetch('/feedback-data')
+            .then(response => response.json())
+            .then(data => {
+                feedbackData = data; // Save data for export
+
+                // Populate table
+                const tbody = document.getElementById('feedback-table');
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row.id}</td>
+                        <td>${row.rating}</td>
+                        <td>${row.widget_type}</td>
+                        <td>${row.timestamp}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                // Initialize chart
+                renderChart(data);
+
+                // Filter change listener
+                document.getElementById('widget-filter').addEventListener('change', function () {
+                    const filter = this.value;
+                    const filteredData = filter === 'all' ? feedbackData : feedbackData.filter(row => row.widget_type === filter);
+                    renderChart(filteredData);
+                });
+
+                // Export button listener
+                document.getElementById('export-btn').addEventListener('click', function () {
+                    exportToCSV(feedbackData, 'feedback_data.csv');
+                });
+            });
+
+        function renderChart(data) {
+            const ctx = document.getElementById('feedback-chart').getContext('2d');
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            const labels = data.map(row => row.timestamp);
+            const ratings = data.map(row => row.rating);
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Feedback Rating',
+                        data: ratings,
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Timestamp'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Rating'
+                            },
+                            min: 1,
+                            max: 5,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function exportToCSV(data, filename) {
+            // CSV header
+            const headers = ['ID,Rating,Widget Type,Timestamp'];
+            // CSV rows
+            const rows = data.map(row => `${row.id},${row.rating},${row.widget_type},${row.timestamp}`);
+            // Combine header and rows
+            const csvContent = headers.join('\n') + '\n' + rows.join('\n');
+            
+            // Create a downloadable link
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>

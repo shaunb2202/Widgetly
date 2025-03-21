@@ -16,6 +16,8 @@
             background-color: #333;
             padding: 15px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
         }
         nav a {
             color: white;
@@ -26,9 +28,12 @@
         nav a:hover {
             text-decoration: underline;
         }
+        nav .nav-title {
+            color: #4CAF50;
+            margin-right: auto;
+            font-weight: 700;
+        }
         .header {
-            background-color: #4CAF50;
-            color: white;
             text-align: center;
             padding: 40px 20px;
         }
@@ -36,6 +41,13 @@
             font-size: 48px;
             margin: 0;
             font-weight: 700;
+            color: #000;
+        }
+        .header p {
+            font-size: 20px;
+            margin: 10px 0 0;
+            font-weight: 400;
+            color: #000;
         }
         .container {
             max-width: 1200px;
@@ -68,6 +80,7 @@
         }
         .section-image img {
             max-width: 100%;
+            max-height: 450px;
             height: auto;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -76,12 +89,14 @@
 </head>
 <body>
     <nav>
+        <a href="/index.html" class="nav-title">Widgetly</a>
         <a href="/index.html">Home</a>
         <a href="/builder.html">Build Widget</a>
         <a href="/dashboard.html">Dashboard</a>
     </nav>
     <div class="header">
-        <h1>Widgetly</h1>
+        <h1>Build products your customers love</h1>
+        <p>Make informed product decisions based on real user feedback</p>
     </div>
     <div class="container">
         <div class="section">
@@ -95,7 +110,7 @@
                 </p>
             </div>
             <div class="section-image">
-                <img src="https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&h=300&q=80" alt="User providing feedback on a tablet">
+                <img src="/feedback.png" alt="User providing feedback">
             </div>
         </div>
         <div class="section reverse">
@@ -109,7 +124,7 @@
                 </p>
             </div>
             <div class="section-image">
-                <img src="https://via.placeholder.com/500x300.png?text=Analyzing+Results" alt="Data analysis visualization">
+                <img src="/analysis.png" alt="Data analysis visualization">
             </div>
         </div>
     </div>

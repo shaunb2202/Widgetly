@@ -4,279 +4,449 @@
     <meta charset="UTF-8">
     <title>Build Your Widget</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
-            min-height: 100vh; /* Ensure body can grow */
-        }
-        nav {
-            background-color: #333;
-            padding: 15px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        nav a {
-            color: white;
-            margin: 0 20px;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        nav a:hover {
-            text-decoration: underline;
-        }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }
+        nav { background-color: #333; padding: 10px; margin: -20px -20px 20px -20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        nav a { color: white; margin: 0 15px; text-decoration: none; font-weight: bold; }
+        nav a:hover { text-decoration: underline; }
+        nav a.active { color: #5cb85c; text-decoration: underline; } /* Highlight current page */
+        h1 { text-align: center; margin-bottom: 30px; color: #333; }
         .container {
             display: flex;
+            flex-wrap: wrap;
             gap: 30px;
-            padding: 30px;
-            max-width: 1200px;
-            margin: 0 auto;
-            flex-direction: column;
         }
-        .title {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #333;
-            text-align: center;
-        }
-        .content {
-            display: flex;
-            gap: 30px;
-            width: 100%;
-        }
-        .form, .preview {
-            width: 50%;
-        }
-        label {
-            display: block;
-            margin: 15px 0 5px;
-            font-weight: 500;
-            color: #555;
-        }
-        input[type="text"] {
-            padding: 10px;
-            width: 100%;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        .color-button {
-            padding: 6px 12px;
-            width: auto;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.2s;
-        }
-        .color-button:hover {
-            background-color: #45a049;
-        }
-        input[type="color"] {
-            display: none;
-        }
-        button.generate {
-            padding: 10px;
-            width: 100%;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 25px;
-            font-size: 16px;
-            font-weight: 500;
-            transition: background-color 0.2s;
-        }
-        button.generate:hover {
-            background-color: #45a049;
-        }
-        #web-preview, #email-preview {
+        .form {
+            background-color: white;
+            width: calc(50% - 15px);
+            min-width: 300px;
             border: 1px solid #ddd;
+            padding: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        .previews-column {
+            width: calc(50% - 15px);
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-sizing: border-box;
+        }
+        .preview {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .form h2, .preview h2 { margin-top: 0; color: #444; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
+        label { display: block; margin: 12px 0 6px; font-weight: bold; color: #555; }
+        input[type="text"], input[type="color"], input[type="number"], select, button, textarea#embed-code {
+             padding: 10px; width: 100%; box-sizing: border-box; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem;
+        }
+        input[type="color"] { padding: 2px; height: 40px; cursor: pointer; }
+        button { background-color: #5cb85c; color: white; border: none; cursor: pointer; margin-top: 15px; font-size: 1.05em; transition: background-color 0.2s ease; padding: 12px 15px; }
+        button:hover { background-color: #4cae4c; }
+        #web-widget-preview, #email-widget-preview {
+            border: 1px solid #ccc;
             padding: 20px;
             text-align: center;
-            margin-bottom: 25px;
-            background-color: #fff;
-            border-radius: 6px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-        #web-preview h4, #email-preview h4 {
-            margin: 0 0 10px;
-            font-size: 16px;
-            color: #333;
+            background-color: #ffffff;
+            margin-top: 15px;
+            border-radius: 4px;
+            font-family: Arial, sans-serif;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         .emoji {
-            font-size: 24px;
-            margin: 5px;
-            cursor: pointer;
+            font-size: 28px;
+            margin: 5px 8px;
+            cursor: default;
+            display: inline-block;
+            transition: transform 0.1s ease;
         }
-        .preview h3 {
-            font-size: 20px;
-            margin-bottom: 15px;
-            color: #333;
-        }
-        textarea.embed-code {
-            width: 100%;
-            padding: 10px;
+        #feedback-box-preview {
+            display: none;
+            margin-top: 15px;
+            width: 95%;
+            padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            font-size: 14px;
-            margin-top: 10px;
-            display: none; /* Hidden by default */
+            min-height: 50px;
             box-sizing: border-box;
-            resize: vertical; /* Allow vertical resizing */
+        }
+        #embed-code { margin-top: 30px; width: 100%; font-family: monospace; font-size: 0.9em; border: 1px dashed #ccc; padding: 15px; background-color: #eef; border-radius: 4px; resize: vertical; box-sizing: border-box;}
+        #trigger-options { margin-top: 10px; padding: 15px; border: 1px dashed #eee; border-radius: 4px; background-color: #fafafa; }
+        @media (max-width: 900px) {
+            .form, .previews-column {
+                width: 100%;
+            }
+            .container {
+                gap: 20px;
+            }
         }
     </style>
 </head>
 <body>
     <nav>
-        <a href="/index.html">Home</a>
-        <a href="/builder.html">Build Widget</a>
-        <a href="/dashboard.html">Dashboard</a>
+        <a href="index.html">Home</a>
+        <a href="builder.html" class="active">Build Widget</a>
+        <a href="dashboard.html">Dashboard</a>
     </nav>
+
+    <h1>Build Your Widget</h1>
+
     <div class="container">
-        <h1 class="title">Build Your Widget</h1>
-        <div class="content">
-            <div class="form">
-                <label for="web-message">Web Widget Message:</label>
-                <input type="text" id="web-message" placeholder="How satisfied are you? (Web)">
-                <label for="web-color">Web Background Color:</label>
-                <button class="color-button" id="web-color-button">Select colour</button>
-                <input type="color" id="web-color" value="#ffffff">
-                <label for="email-message">Email Widget Message:</label>
-                <input type="text" id="email-message" placeholder="How satisfied are you? (Email)">
-                <label for="email-color">Email Background Color:</label>
-                <button class="color-button" id="email-color-button">Select colour</button>
-                <input type="color" id="email-color" value="#ffffff">
-                <button class="generate" id="generate-web-btn" onclick="generateWebCode()">Generate Web Code</button>
-                <textarea class="embed-code" id="web-embed-code" rows="4"></textarea>
-                <button class="generate" id="generate-email-btn" onclick="generateEmailCode()">Generate Email Code</button>
-                <textarea class="embed-code" id="email-embed-code" rows="4"></textarea>
+        <div class="form">
+            <h2>Configuration</h2>
+            <label for="language">Language:</label>
+            <select id="language">
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+            </select>
+            <label for="message">Custom Message (Web Widget):</label>
+            <input type="text" id="message" placeholder="e.g., How satisfied are you?">
+            <label for="email-message">Custom Message (Email Widget):</label>
+            <input type="text" id="email-message" placeholder="e.g., How was your experience?">
+            <label for="font">Font (Preview & Widgets):</label>
+            <select id="font">
+                <option value="Arial, Helvetica, sans-serif">Arial</option>
+                <option value="'Times New Roman', Times, serif">Times New Roman</option>
+                <option value="'Courier New', Courier, monospace">Courier New</option>
+                <option value="Verdana, Geneva, sans-serif">Verdana</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Trebuchet MS', Helvetica, sans-serif">Trebuchet MS</option>
+                <option value="'Lucida Sans Unicode', 'Lucida Grande', sans-serif">Lucida Sans</option>
+            </select>
+            <label for="color">Background Color (Preview & Widgets):</label>
+            <input type="color" id="color" value="#ffffff">
+            <label for="feedback-box">Open-Text Feedback (Web Widget):</label>
+            <select id="feedback-box">
+                <option value="none">None</option>
+                <option value="low">Show for Low Scores (1-3)</option>
+                <option value="high">Show for High Scores (4-5)</option>
+                <option value="always">Always Show</option>
+            </select>
+            <label for="trigger-type">Web Widget Trigger:</label>
+            <select id="trigger-type">
+                <option value="immediate">Immediate</option>
+                <option value="delay">Time Delay (Seconds)</option>
+                <option value="scroll">Scroll Percentage (%)</option>
+                <option value="exit">Exit Intent</option>
+                <option value="button">Button Click (by ID)</option>
+            </select>
+            <div id="trigger-options" style="display:none;">
+                <label for="trigger-value">Trigger Value:</label>
+                <input type="text" id="trigger-value" placeholder="e.g., 5 or 50 or buttonId">
             </div>
-            <div class="preview">
-                <h3>Preview</h3>
-                <div id="web-preview">
-                    <h4>Web Widget</h4>
-                    <p id="preview-web-message">How satisfied are you? (Web)</p>
-                    <span class="emoji">😣</span>
-                    <span class="emoji">😟</span>
-                    <span class="emoji">😐</span>
-                    <span class="emoji">😊</span>
-                    <span class="emoji">😍</span>
-                </div>
-                <div id="email-preview">
-                    <h4>Email Widget</h4>
-                    <p id="preview-email-message">How satisfied are you? (Email)</p>
-                    <span class="emoji">😣</span>
-                    <span class="emoji">😟</span>
-                    <span class="emoji">😐</span>
-                    <span class="emoji">😊</span>
-                    <span class="emoji">😍</span>
-                </div>
-            </div>
+            <button onclick="generateWebCode()">Generate Web Code</button>
+            <button onclick="generateEmailCode()">Generate Email Code</button>
         </div>
+        <div class="previews-column">
+            <div class="preview" id="web-preview-container">
+                <h2>Web Widget Preview</h2>
+                <div id="web-widget-preview">
+                    <p id="web-preview-message" style="margin: 0 0 15px 0; font-size: 1.1em; color: #333;">How satisfied are you?</p>
+                    <span class="emoji" aria-label="Rate 1 out of 5">😣</span>
+                    <span class="emoji" aria-label="Rate 2 out of 5">😟</span>
+                    <span class="emoji" aria-label="Rate 3 out of 5">😐</span>
+                    <span class="emoji" aria-label="Rate 4 out of 5">😊</span>
+                    <span class="emoji" aria-label="Rate 5 out of 5">😍</span>
+                    <textarea id="feedback-box-preview" placeholder="Your feedback..."></textarea>
+                </div>
+            </div>
+            <div class="preview" id="email-preview-container">
+                <h2>Email Widget Preview</h2>
+                <div id="email-widget-preview"> 
+                    <p id="email-preview-message" style="margin: 0 0 15px 0; font-size: 1.1em; color: #333;">How was your experience?</p>
+                    <span class="emoji" aria-label="Rate 1 out of 5">😣</span>
+                    <span class="emoji" aria-label="Rate 2 out of 5">😟</span>
+                    <span class="emoji" aria-label="Rate 3 out of 5">😐</span>
+                    <span class="emoji" aria-label="Rate 4 out of 5">😊</span>
+                    <span class="emoji" aria-label="Rate 5 out of 5">😍</span>
+                    <p style="font-size: 0.85em; color: #777; margin: 10px 0 0 0;">(Email clients show links)</p>
+                </div>
+            </div>
+        </div> 
     </div>
+    <textarea id="embed-code" rows="12" style="display:none;" readonly placeholder="Generated code will appear here..."></textarea>
 
     <script>
-        const webMessageInput = document.getElementById('web-message');
+        console.log('Script started');
+        const messageInput = document.getElementById('message');
         const emailMessageInput = document.getElementById('email-message');
-        const webColorInput = document.getElementById('web-color');
-        const emailColorInput = document.getElementById('email-color');
-        const webColorButton = document.getElementById('web-color-button');
-        const emailColorButton = document.getElementById('email-color-button');
-        const previewWebMessage = document.getElementById('preview-web-message');
-        const previewEmailMessage = document.getElementById('preview-email-message');
-        const webPreview = document.getElementById('web-preview');
-        const emailPreview = document.getElementById('email-preview');
-        const webEmbedCode = document.getElementById('web-embed-code');
-        const emailEmbedCode = document.getElementById('email-embed-code');
-        const generateWebBtn = document.getElementById('generate-web-btn');
-        const generateEmailBtn = document.getElementById('generate-email-btn');
-
-        webColorButton.addEventListener('click', function () {
-            webColorInput.click();
+        const languageSelect = document.getElementById('language');
+        const fontSelect = document.getElementById('font');
+        const colorInput = document.getElementById('color');
+        const feedbackBoxSelect = document.getElementById('feedback-box');
+        const triggerTypeSelect = document.getElementById('trigger-type');
+        const triggerOptionsDiv = document.getElementById('trigger-options');
+        const triggerValueInput = document.getElementById('trigger-value');
+        const embedCode = document.getElementById('embed-code');
+        const webWidgetPreview = document.getElementById('web-widget-preview');
+        const emailWidgetPreview = document.getElementById('email-widget-preview');
+        const webPreviewMessage = document.getElementById('web-preview-message');
+        const emailPreviewMessage = document.getElementById('email-preview-message');
+        const feedbackBoxPreview = document.getElementById('feedback-box-preview');
+        const translations = {
+            en: { message: 'How satisfied are you?', emailMessage: 'How was your experience?', low: 'What could we improve?', high: 'What did you like most?', general: 'Your feedback...' },
+            es: { message: '¿Qué tan satisfecho estás?', emailMessage: '¿Cómo fue tu experiencia?', low: '¿Qué podríamos mejorar?', high: '¿Qué te gustó más?', general: 'Tus comentarios...' },
+            fr: { message: 'Êtes-vous satisfait ?', emailMessage: 'Comment était votre expérience ?', low: 'Que pourrions-nous améliorer ?', high: 'Qu’avez-vous préféré ?', general: 'Vos commentaires...' }
+        };
+        messageInput.addEventListener('input', updateWebPreviewMessage);
+        emailMessageInput.addEventListener('input', updateEmailPreviewMessage);
+        languageSelect.addEventListener('change', () => {
+            updateWebPreviewMessage();
+            updateEmailPreviewMessage();
+            updateFeedbackPreview();
         });
-        emailColorButton.addEventListener('click', function () {
-            emailColorInput.click();
-        });
-
-        webMessageInput.addEventListener('input', function () {
-            previewWebMessage.textContent = webMessageInput.value || 'How satisfied are you? (Web)';
-        });
-        emailMessageInput.addEventListener('input', function () {
-            previewEmailMessage.textContent = emailMessageInput.value || 'How satisfied are you? (Email)';
-        });
-        webColorInput.addEventListener('input', function () {
-            webPreview.style.backgroundColor = webColorInput.value;
-        });
-        emailColorInput.addEventListener('input', function () {
-            emailPreview.style.backgroundColor = emailColorInput.value;
-        });
-
-        function generateWebCode() {
-            const code = `
-        <div style="background-color:${webColorInput.value};padding:20px;text-align:center;font-family:Arial,sans-serif;">
-          <p>${webMessageInput.value || 'How satisfied are you? (Web)'}</p>
-          <span style="font-size:24px;margin:5px;cursor:pointer;" onclick="submitFeedback(1)">😣</span>
-          <span style="font-size:24px;margin:5px;cursor:pointer;" onclick="submitFeedback(2)">😟</span>
-          <span style="font-size:24px;margin:5px;cursor:pointer;" onclick="submitFeedback(3)">😐</span>
-          <span style="font-size:24px;margin:5px;cursor:pointer;" onclick="submitFeedback(4)">😊</span>
-          <span style="font-size:24px;margin:5px;cursor:pointer;" onclick="submitFeedback(5)">😍</span>
-          <script>
-            function submitFeedback(rating) {
-              fetch('/feedback', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ rating: rating, widget_type: 'web' })
-              })
-              .then(response => response.text())
-              .then(data => alert(data))
-              .catch(err => console.error('Error:', err));
+        fontSelect.addEventListener('change', updateFontPreview);
+        colorInput.addEventListener('input', updateColorPreview);
+        feedbackBoxSelect.addEventListener('change', updateFeedbackPreview);
+        triggerTypeSelect.addEventListener('change', updateTriggerOptions);
+        function updateWebPreviewMessage() {
+            const lang = languageSelect.value;
+            webPreviewMessage.textContent = messageInput.value.trim() || translations[lang].message;
+        }
+        function updateEmailPreviewMessage() {
+            const lang = languageSelect.value;
+            emailPreviewMessage.textContent = emailMessageInput.value.trim() || translations[lang].emailMessage || translations[lang].message;
+        }
+        function updateFontPreview() {
+            const selectedFont = fontSelect.value;
+            console.log('Font changed to:', selectedFont);
+            webWidgetPreview.style.fontFamily = selectedFont;
+            emailWidgetPreview.style.fontFamily = selectedFont;
+            webPreviewMessage.style.fontFamily = selectedFont;
+            emailPreviewMessage.style.fontFamily = selectedFont;
+        }
+        function updateColorPreview() {
+            const selectedColor = colorInput.value;
+            console.log('Color changed to:', selectedColor);
+            webWidgetPreview.style.backgroundColor = selectedColor;
+            emailWidgetPreview.style.backgroundColor = selectedColor;
+        }
+        function updateFeedbackPreview() {
+            const option = feedbackBoxSelect.value;
+            const lang = languageSelect.value;
+            console.log('Feedback option:', option);
+            feedbackBoxPreview.style.display = option === 'none' ? 'none' : 'block';
+            if (option === 'low') {
+                feedbackBoxPreview.placeholder = translations[lang].low;
+            } else if (option === 'high') {
+                feedbackBoxPreview.placeholder = translations[lang].high;
+            } else if (option === 'always') {
+                feedbackBoxPreview.placeholder = translations[lang].general;
             }
-          <\/script>
-        </div>
-        `;
-            webEmbedCode.value = code.trim();
-            webEmbedCode.style.display = 'block';
         }
-
-        function generateEmailCode() {
+        function updateTriggerOptions() {
+            const triggerType = triggerTypeSelect.value;
+            console.log('Trigger type:', triggerType);
+            if (triggerType === 'immediate' || triggerType === 'exit') {
+                triggerOptionsDiv.style.display = 'none';
+                triggerValueInput.value = '';
+                triggerValueInput.removeAttribute('min');
+                triggerValueInput.removeAttribute('max');
+            } else {
+                triggerOptionsDiv.style.display = 'block';
+                if (triggerType === 'delay') {
+                    triggerValueInput.placeholder = 'Seconds (e.g., 5)';
+                    triggerValueInput.type = 'number';
+                    triggerValueInput.min = "0";
+                    triggerValueInput.removeAttribute('max');
+                } else if (triggerType === 'scroll') {
+                    triggerValueInput.placeholder = 'Percentage (e.g., 50)';
+                    triggerValueInput.type = 'number';
+                    triggerValueInput.min = "0";
+                    triggerValueInput.max = "100";
+                } else if (triggerType === 'button') {
+                    triggerValueInput.placeholder = 'Button ID (e.g., contactButton)';
+                    triggerValueInput.type = 'text';
+                    triggerValueInput.removeAttribute('min');
+                    triggerValueInput.removeAttribute('max');
+                }
+            }
+        }
+        function generateWebCode() {
+            console.log('generateWebCode called');
+            const lang = languageSelect.value;
+            const trigger = triggerTypeSelect.value;
+            const rawTriggerValue = triggerValueInput.value.trim();
+            const feedbackSetting = feedbackBoxSelect.value;
+            const bgColor = colorInput.value;
+            const font = fontSelect.value;
+            const webMessage = messageInput.value.trim() || translations[lang].message;
+            let triggerValue;
+            if (trigger === 'delay') {
+                triggerValue = !isNaN(parseFloat(rawTriggerValue)) && parseFloat(rawTriggerValue) >= 0 ? rawTriggerValue : '5';
+            } else if (trigger === 'scroll') {
+                triggerValue = !isNaN(parseFloat(rawTriggerValue)) && parseFloat(rawTriggerValue) >= 0 && parseFloat(rawTriggerValue) <= 100 ? rawTriggerValue : '50';
+            } else if (trigger === 'button') {
+                triggerValue = rawTriggerValue || 'triggerButton';
+            }
+            const includeFeedbackBox = feedbackSetting !== 'none';
+            let feedbackPlaceholder = translations[lang].general;
+            if (feedbackSetting === 'low') feedbackPlaceholder = translations[lang].low;
+            else if (feedbackSetting === 'high') feedbackPlaceholder = translations[lang].high;
+            const feedbackTextareaHTML = includeFeedbackBox ? `
+        <textarea id="widget-feedback-text" placeholder="${feedbackPlaceholder}" style="width: 95%; margin-top: 15px; display: ${feedbackSetting === 'always' ? 'block' : 'none'}; box-sizing: border-box; padding: 8px; border: 1px solid #ccc; border-radius: 4px; min-height: 60px;"></textarea>
+            ` : '';
+            let triggerScript = '';
+            switch(trigger) {
+                case 'delay':
+                    triggerScript = `setTimeout(showWidget, ${triggerValue} * 1000);`;
+                    break;
+                case 'scroll':
+                    triggerScript = `
+    let scrollWidgetShown = false; const scrollTargetPercent = ${triggerValue};
+    const scrollHandler = () => {
+        if (scrollWidgetShown) { window.removeEventListener('scroll', scrollHandler); return; }
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight; const clientHeight = document.documentElement.clientHeight;
+        if (scrollHeight <= clientHeight) { showWidget(); scrollWidgetShown = true; window.removeEventListener('scroll', scrollHandler); return; }
+        const scrollPercent = (scrollTop / (scrollHeight - clientHeight)) * 100;
+        if (scrollPercent >= scrollTargetPercent) { showWidget(); scrollWidgetShown = true; window.removeEventListener('scroll', scrollHandler); }
+    };
+    window.addEventListener('scroll', scrollHandler, { passive: true });`;
+                    break;
+                case 'exit':
+                    triggerScript = `
+    let exitIntentShown = false; const exitHandler = (e) => {
+        if (!exitIntentShown && (e.clientY <= 0 || e.movementY < -20)) {
+            showWidget(); exitIntentShown = true; document.removeEventListener('mouseout', exitHandler);
+        }
+    };
+    document.addEventListener('mouseout', exitHandler);`;
+                    break;
+                case 'button':
+                    const escapedTriggerValue = triggerValue.replace(/'/g, "\\'");
+                    triggerScript = `
+    try {
+        const triggerBtn = document.getElementById('${escapedTriggerValue}');
+        if (triggerBtn) { triggerBtn.addEventListener('click', showWidget); }
+        else { console.warn('Widget trigger button with ID "${escapedTriggerValue}" not found.'); }
+    } catch (e) { console.error('Error finding trigger button:', e); }`;
+                    break;
+                case 'immediate':
+                default:
+                    triggerScript = `if (document.readyState === 'complete') { showWidget(); } else { window.addEventListener('load', showWidget); }`;
+                    break;
+            }
             const code = `
-        <div style="background-color:${emailColorInput.value};padding:20px;text-align:center;font-family:Arial,sans-serif;">
-          <p>${emailMessageInput.value || 'How satisfied are you? (Email)'}</p>
-          <form action="/feedback" method="post" style="display:inline;">
-            <input type="hidden" name="rating" value="1">
-            <input type="hidden" name="widget_type" value="email">
-            <button type="submit" style="font-size:24px;border:none;background:none;cursor:pointer;">😣</button>
-          </form>
-          <form action="/feedback" method="post" style="display:inline;">
-            <input type="hidden" name="rating" value="2">
-            <input type="hidden" name="widget_type" value="email">
-            <button type="submit" style="font-size:24px;border:none;background:none;cursor:pointer;">😟</button>
-          </form>
-          <form action="/feedback" method="post" style="display:inline;">
-            <input type="hidden" name="rating" value="3">
-            <input type="hidden" name="widget_type" value="email">
-            <button type="submit" style="font-size:24px;border:none;background:none;cursor:pointer;">😐</button>
-          </form>
-          <form action="/feedback" method="post" style="display:inline;">
-            <input type="hidden" name="rating" value="4">
-            <input type="hidden" name="widget_type" value="email">
-            <button type="submit" style="font-size:24px;border:none;background:none;cursor:pointer;">😊</button>
-          </form>
-          <form action="/feedback" method="post" style="display:inline;">
-            <input type="hidden" name="rating" value="5">
-            <input type="hidden" name="widget_type" value="email">
-            <button type="submit" style="font-size:24px;border:none;background:none;cursor:pointer;">😍</button>
-          </form>
-        </div>
-        `;
-            emailEmbedCode.value = code.trim();
-            emailEmbedCode.style.display = 'block';
+<!-- Widget Start -->
+<div id="feedback-widget-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000; display: none; background-color:${bgColor}; padding:20px; text-align:center; font-family:${font.replace(/'/g, "\\'")}; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); max-width: 320px; box-sizing: border-box;">
+    <button onclick="closeWidget()" style="position: absolute; top: 8px; right: 8px; background: none; border: none; font-size: 1.4em; line-height: 1; cursor: pointer; color: #777; padding: 0;" aria-label="Close widget">×</button>
+    <p style="margin: 0 0 15px 0; font-size: 1.1em; color: #333;">${webMessage}</p>
+    <div>
+        <span style="font-size:28px; margin: 0 8px; cursor:pointer; display: inline-block;" onclick="submitFeedback(1)" title="Rate 1 out of 5" role="button" aria-label="Rate 1 out of 5">😣</span>
+        <span style="font-size:28px; margin: 0 8px; cursor:pointer; display: inline-block;" onclick="submitFeedback(2)" title="Rate 2 out of 5" role="button" aria-label="Rate 2 out of 5">😟</span>
+        <span style="font-size:28px; margin: 0 8px; cursor:pointer; display: inline-block;" onclick="submitFeedback(3)" title="Rate 3 out of 5" role="button" aria-label="Rate 3 out of 5">😐</span>
+        <span style="font-size:28px; margin: 0 8px; cursor:pointer; display: inline-block;" onclick="submitFeedback(4)" title="Rate 4 out of 5" role="button" aria-label="Rate 4 out of 5">😊</span>
+        <span style="font-size:28px; margin: 0 8px; cursor:pointer; display: inline-block;" onclick="submitFeedback(5)" title="Rate 5 out of 5" role="button" aria-label="Rate 5 out of 5">😍</span>
+    </div>
+    ${feedbackTextareaHTML}
+</div>
+<script>
+(function() {
+    const widget = document.getElementById('feedback-widget-container');
+    if (!widget) { console.error("Widget container not found"); return; }
+    const feedbackBox = document.getElementById('widget-feedback-text');
+    const feedbackSetting = '${feedbackSetting}';
+    const thankYouMessage = "Thank you for your feedback!";
+    const errorMessage = "Could not submit feedback. Please try again later.";
+    let isSubmitting = false;
+    window.showWidget = function() { if (widget) widget.style.display = 'block'; }
+    window.closeWidget = function() { if (widget) widget.style.display = 'none'; }
+    window.submitFeedback = function(rating) {
+        if (isSubmitting) return;
+        isSubmitting = true;
+        let feedbackTextValue = '';
+        if (feedbackBox) {
+            let showBox = (feedbackSetting === 'always') || (feedbackSetting === 'low' && rating <= 3) || (feedbackSetting === 'high' && rating >= 4);
+            if (showBox) {
+                feedbackBox.style.display = 'block';
+                feedbackTextValue = feedbackBox.value.trim();
+            }
         }
+        const originalContent = widget.innerHTML;
+        const closeButtonHTML = widget.querySelector('button[onclick="closeWidget()"]').outerHTML;
+        widget.innerHTML = '<div style="padding: 10px 0;">' + thankYouMessage + '</div>' + closeButtonHTML;
+        fetch('https://widgetly-backend.herokuapp.com/feedback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({
+                rating: rating, widget_type: 'web', feedback: feedbackTextValue,
+                submitted_at: new Date().toISOString(), page_url: window.location.href
+            })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(\`HTTP error! Status: \${response.status}\`);
+            return response.text();
+        })
+        .then(data => {
+            console.log('Feedback submitted successfully:', data);
+            setTimeout(() => { if (widget) closeWidget(); }, 2500);
+        })
+        .catch(err => {
+            console.error('Error submitting feedback:', err);
+            if (widget) {
+                widget.innerHTML = '<div style="color: red; padding: 10px 0;">' + errorMessage + '</div>' + closeButtonHTML;
+                setTimeout(closeWidget, 4000);
+            }
+        })
+        .finally(() => {
+            isSubmitting = false;
+        });
+    }
+    ${triggerScript}
+})();
+<script>
+<!-- Widget End -->
+            `;
+            embedCode.value = code.trim();
+            embedCode.style.display = 'block';
+            embedCode.scrollTop = 0;
+        }
+        function generateEmailCode() {
+            console.log('generateEmailCode called - Link-based');
+            const lang = languageSelect.value;
+            const baseURL = "https://widgetly-backend.herokuapp.com/feedback";
+            const bgColor = colorInput.value;
+            const font = fontSelect.value;
+            const emailMessage = emailMessageInput.value.trim() || translations[lang].emailMessage || translations[lang].message;
+            const safeFont = font.replace(/'/g, "");
+            const styles = `background-color:${bgColor}; padding:25px; text-align:center; font-family:${safeFont}, Arial, sans-serif; border-radius: 8px; max-width: 500px; margin: auto; border: 1px solid #eee;`;
+            const linkStyle = `font-size:28px; text-decoration:none; margin: 0 10px; color: #333; display: inline-block; line-height: 1;`;
+            const ratingLinks = [
+                { rating: 1, emoji: '😣' }, { rating: 2, emoji: '😟' }, { rating: 3, emoji: '😐' },
+                { rating: 4, emoji: '😊' }, { rating: 5, emoji: '😍' }
+            ].map(item =>
+                `<a href="${baseURL}?rating=${item.rating}&widget_type=email" target="_blank" style="${linkStyle}" title="Rate ${item.rating} out of 5">${item.emoji}</a>`
+            ).join('  ');
+            const code = `
+<!-- Email Widget Start -->
+<div style="${styles}">
+    <p style="margin: 0 0 20px 0; font-size: 1.2em; color: #333; line-height: 1.4;">${emailMessage}</p>
+    <div style="margin-bottom: 15px; line-height: 1;">
+        ${ratingLinks}
+    </div>
+    <p style="font-size: 0.85em; color: #777; margin: 10px 0 0 0;">(Clicking an emoji opens a tab to record your rating)</p>
+</div>
+<!-- Email Widget End -->
+            `;
+            embedCode.value = code.trim();
+            embedCode.style.display = 'block';
+            embedCode.scrollTop = 0;
+        }
+        console.log('Running initial setup...');
+        updateWebPreviewMessage();
+        updateEmailPreviewMessage();
+        updateFontPreview();
+        updateColorPreview();
+        updateFeedbackPreview();
+        updateTriggerOptions();
+        console.log('Script ended');
     </script>
 </body>
 </html>

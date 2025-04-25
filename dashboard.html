@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Feedback Dashboard</title>
+    <base href="/Widgetly/">
+    <script>
+        if (window.location.hostname === 'localhost') {
+            document.querySelector('base').href = '/';
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -24,6 +30,10 @@
             font-weight: 500;
         }
         nav a:hover {
+            text-decoration: underline;
+        }
+        nav a.active {
+            color: #5cb85c;
             text-decoration: underline;
         }
         .content {
@@ -98,9 +108,9 @@
 </head>
 <body>
     <nav>
-        <a href="/index.html">Home</a>
-        <a href="/builder.html">Build Widget</a>
-        <a href="/dashboard.html">Dashboard</a>
+        <a href="index.html">Home</a>
+        <a href="builder.html">Build Widget</a>
+        <a href="dashboard.html" class="active">Dashboard</a>
     </nav>
     <div class="content">
         <h1>Feedback Dashboard</h1>

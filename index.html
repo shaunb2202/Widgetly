@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Widgetly - Home</title>
+    <base href="/Widgetly/">
+    <script>
+        if (window.location.hostname === 'localhost') {
+            document.querySelector('base').href = '/';
+        }
+    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -26,6 +32,10 @@
             font-weight: 500;
         }
         nav a:hover {
+            text-decoration: underline;
+        }
+        nav a.active {
+            color: #5cb85c;
             text-decoration: underline;
         }
         nav .nav-title {
@@ -90,7 +100,7 @@
 <body>
 <nav>
     <a href="index.html" class="nav-title">Widgetly</a>
-    <a href="index.html">Home</a>
+    <a href="index.html" class="active">Home</a>
     <a href="builder.html">Build Widget</a>
     <a href="dashboard.html">Dashboard</a>
 </nav>
@@ -110,7 +120,7 @@
                 </p>
             </div>
             <div class="section-image">
-                <img src="/feedback.png" alt="User providing feedback">
+                <img src="feedback.png" alt="User providing feedback">
             </div>
         </div>
         <div class="section reverse">
@@ -124,7 +134,7 @@
                 </p>
             </div>
             <div class="section-image">
-                <img src="/analysis.png" alt="Data analysis visualization">
+                <img src="analysis.png" alt="Data analysis visualization">
             </div>
         </div>
     </div>
